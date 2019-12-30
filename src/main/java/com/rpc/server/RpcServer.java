@@ -1,6 +1,8 @@
 package com.rpc.server;
 
 import com.rpc.registry.RegistryService;
+import com.rpc.util.RpcDecoder;
+import com.rpc.util.RpcEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -44,7 +46,7 @@ public class RpcServer {
                                     .addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
                                     .addLast(new RpcDecoder(RpcRequest.class))
                                     .addLast(new RpcEncoder(RpcResponse.class))
-                                    .addLast(new RpcHandler(handlerMap));
+                                    .addLast(new RpcServerHandler(handlerMap));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
