@@ -8,6 +8,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class RpcEncoder extends MessageToByteEncoder {
     private Class<?> genericClass;
 
+    public RpcEncoder(Class<?> genericClass){
+        this.genericClass = genericClass;
+    }
+
     @Override
     public void encode(ChannelHandlerContext ctx, Object in, ByteBuf out) throws Exception{
         if(genericClass.isInstance(in)){

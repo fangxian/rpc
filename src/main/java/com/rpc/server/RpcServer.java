@@ -14,6 +14,12 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 public class RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
 
@@ -22,6 +28,9 @@ public class RpcServer {
 
     private String serverAddress;
     private RegistryService serviceRegistry;
+    private Map<String, Object> handlerMap = new HashMap<>();
+
+    private static ThreadPoolExecutor threadPoolExecutor;
 
     public RpcServer(String serverAddress){
         this.serverAddress = serverAddress;
@@ -33,7 +42,7 @@ public class RpcServer {
     }
 
 
-/*
+
     public void start() throws Exception{
         if(bossGroup == null && workerGroup == null){
             bossGroup = new NioEventLoopGroup();
@@ -66,5 +75,26 @@ public class RpcServer {
             future.channel().closeFuture().sync();
         }
     }
-*/
+
+    public void stop(){
+        if(bossGroup != null){
+            bossGroup.shutdownGracefully();
+        }
+        if(workerGroup != null){
+            workerGroup.shutdownGracefully();
+        }
+    }
+
+    public void submit(Runnable task){
+        if(threadPoolExecutor == null){
+            synchronized (RpcServer.class){
+                if(threadPoolExecutor == null){
+                    threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
+                }
+            }
+        }
+        threadPoolExecutor.submit(task);
+    }
+
+
 }

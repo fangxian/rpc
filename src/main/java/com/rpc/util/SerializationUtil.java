@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SerializationUtil {
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
     private static LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
-    private static Objenesis objenesis = new ObjenesisStd(true);
 
     private SerializationUtil() {
     }
