@@ -3,6 +3,8 @@ package com.rpc.server;
 import com.rpc.registry.RegistryService;
 import com.rpc.util.RpcDecoder;
 import com.rpc.util.RpcEncoder;
+import com.rpc.util.RpcRequest;
+import com.rpc.util.RpcResponse;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,7 +33,7 @@ public class RpcServer {
     }
 
 
-
+/*
     public void start() throws Exception{
         if(bossGroup == null && workerGroup == null){
             bossGroup = new NioEventLoopGroup();
@@ -64,5 +66,5 @@ public class RpcServer {
             future.channel().closeFuture().sync();
         }
     }
-
+*/
 }
