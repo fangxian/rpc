@@ -22,6 +22,11 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     }
 
     @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg){
+        System.out.println((String)msg);
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
         logger.error("server caught exception",cause);
         ctx.close();
