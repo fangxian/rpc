@@ -27,7 +27,15 @@ public class RpcClient {
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
             600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
-    public static void submit(Runnable task){
+    public void submit(Runnable task){
         threadPoolExecutor.submit(task);
+        discoveryService.stop();
+        //ConnectManage.getInstance().stop();
+    }
+
+    public void stop(){
+        threadPoolExecutor.shutdown();
+        discoveryService.stop();
+
     }
 }
