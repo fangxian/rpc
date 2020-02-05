@@ -91,7 +91,7 @@ public class RpcServer {
         }
     }
 
-    public void submit(Runnable task){
+    public static void submit(Runnable task){
         if(threadPoolExecutor == null){
             synchronized (RpcServer.class){
                 if(threadPoolExecutor == null){
