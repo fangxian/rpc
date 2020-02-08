@@ -32,12 +32,20 @@ public class DiscoveryService {
         this.registerAddr = registerAddr;
         this.registerPort = port;
         this.zookeeperServer = registerAddr+":"+port;
+        connectServer();
+        if(zooKeeper != null) {
+            watchNode();
+        }
     }
 
     public DiscoveryService(String zookeeperServer){
         this.zookeeperServer = zookeeperServer;
         this.registerAddr = zookeeperServer.split(":")[0];
         this.registerPort = zookeeperServer.split("")[1];
+        connectServer();
+        if(zooKeeper != null) {
+            watchNode();
+        }
     }
 
     //connect zookeeper

@@ -13,7 +13,7 @@ public class RpcServerTest {
         RpcServer rpcServer = new RpcServer("127.0.0.1:8899:"+name, registryService);
         //TODO 注册服务
         HelloService helloService = new HelloServiceImp();
-        rpcServer.addService("hello", helloService);
+        rpcServer.addService("test.service.HelloService", helloService);
         try {
             rpcServer.start();
         } catch (Exception e){

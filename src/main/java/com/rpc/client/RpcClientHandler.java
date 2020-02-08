@@ -49,6 +49,12 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     }
 
     @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception{
+        super.channelRegistered(ctx);
+        this.channel = ctx.channel();
+    }
+
+    @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception{
         super.channelActive(ctx);
         this.remotePeer = this.channel.remoteAddress();

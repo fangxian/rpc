@@ -106,7 +106,7 @@ public class Connector {
                 //分离出地址和服务名
                 List<InetSocketAddress> addressList = new ArrayList<>();
                 List<String> serviceNames = new ArrayList<>();
-                for(int i = 0; i > allServerAddress.size(); i++) {
+                for(int i = 0; i < allServerAddress.size(); i++) {
                     String[] array = allServerAddress.get(i).split(":");
                     if(array.length == 3) {
                         String host = array[0];
@@ -166,12 +166,18 @@ public class Connector {
     //choose service handler base on round robin
     public RpcClientHandler chooseHandler(String service) {
         List<InetSocketAddress> addresses = serviceAddressMap.get(service);
-        int size = addresses.size();
+        int size = 0;
+        if(addresses != null)
+            size = addresses.size();
         while(isRunning & size <= 0) {
             try {
                 boolean available = waitForAvailableHandler();
                 if (available) {
-                    size = addresses.size();
+                    List<InetSocketAddress> temp = serviceAddressMap.get(service);
+                    if(temp!= null) {
+                        size = temp.size();
+                        addresses = temp;
+                    }
                 }
             } catch (Exception e) {
                 logger.error("Waiting for available node is interrupted! ", e);
