@@ -1,6 +1,7 @@
 package com.rpc.registry;
 
 import com.rpc.client.ConnectManage;
+import com.rpc.client.Connector;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -102,7 +103,7 @@ public class DiscoveryService {
     }
 
     private void UpdateConnectedServer(){
-        ConnectManage.getInstance().updateConnectedServer(this.dataList);
+        Connector.getInstance().updateConnectServer(this.dataList);
     }
 
     public void stop(){

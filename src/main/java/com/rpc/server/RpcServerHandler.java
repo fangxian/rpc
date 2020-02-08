@@ -68,7 +68,10 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
         FastClass serviceFastClass = FastClass.create(serviceClass);
         int methodIndex = serviceFastClass.getIndex(methodName, parametersType);
+
+        //invoke的实现会动态生成
         return serviceFastClass.invoke(methodIndex, serviceBean, parameters);
+
     }
 
     @Override

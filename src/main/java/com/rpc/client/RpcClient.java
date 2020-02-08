@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 public class RpcClient {
     private DiscoveryService discoveryService;
     private String serverAddress;
-
     public RpcClient(String serverAddress){
         this.serverAddress = serverAddress;
     }
@@ -23,7 +22,9 @@ public class RpcClient {
         this.discoveryService = discoveryService;
     }
 
-
+    public static <T> IAsyncObjectProxy createAsync(Class<T> interfaceClass) {
+        return new ObjectProxy<T>(interfaceClass);
+    }
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
             600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
@@ -34,6 +35,6 @@ public class RpcClient {
     public void stop(){
         threadPoolExecutor.shutdown();
         discoveryService.stop();
-
+        Connector.getInstance().stop();
     }
 }

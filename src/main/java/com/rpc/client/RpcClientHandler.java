@@ -3,23 +3,40 @@ package com.rpc.client;
 import com.rpc.util.RpcRequest;
 import com.rpc.util.RpcResponse;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 
 public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
     private static Logger logger = LoggerFactory.getLogger(RpcClientHandler.class);
     private volatile Channel channel;
     private SocketAddress remotePeer;
-    private ConcurrentHashMap<String, Object> pendingRpc;
+    private ConcurrentHashMap<String, Object> pendingRpc = new ConcurrentHashMap<>();
 
+
+    public RpcFuture sendRequest(RpcRequest rpcRequest) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        RpcFuture rpcFuture = new RpcFuture(rpcRequest);
+        pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
+        channel.writeAndFlush(rpcRequest).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) {
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        }
+
+        return rpcFuture;
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, RpcResponse rpcResponse) throws Exception{

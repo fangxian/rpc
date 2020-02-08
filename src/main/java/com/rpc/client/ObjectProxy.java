@@ -12,17 +12,58 @@ import java.util.UUID;
 public class ObjectProxy<T> implements IAsyncObjectProxy, InvocationHandler {
     private static Logger logger = LoggerFactory.getLogger(ObjectProxy.class);
     private Class<T> clazz;
-    @Override
-    public RpcFuture call(String funcName, Object... args){
-        //TODO
 
+    public ObjectProxy(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
+    @Override
+    public RpcFuture call(String serviceName, String funcName, Object... args){
+        //TODO
+        RpcClientHandler handler = Connector.getInstance().chooseHandler(this.clazz.getName());
+        RpcRequest request = createRequest(this.clazz.getName(), funcName, args);
+        RpcFuture rpcFuture = handler.sendRequest(request);
+        return rpcFuture;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws  Throwable{
         //TODO
+        if(Object.class == method.getDeclaringClass()){
+            String name = method.getName();
+            if ("equals".equals(name)) {
+                return proxy == args[0];
+            } else if ("hashCode".equals(name)) {
+                return System.identityHashCode(proxy);
+            } else if ("toString".equals(name)) {
+                return proxy.getClass().getName() + "@" +
+                        Integer.toHexString(System.identityHashCode(proxy)) +
+                        ", with InvocationHandler " + this;
+            } else {
+                throw new IllegalStateException(String.valueOf(method));
+            }
+        }
 
-        return new Object();
+        RpcRequest rpcRequest = new RpcRequest();
+        rpcRequest.setRequestId(UUID.randomUUID().toString());
+        rpcRequest.setClassName(method.getDeclaringClass().getName());
+        rpcRequest.setMethodName(method.getName());
+        rpcRequest.setParameterTypes(method.getParameterTypes());
+        rpcRequest.setParameters(args);
+
+        // Debug
+        logger.debug(method.getDeclaringClass().getName());
+        logger.debug(method.getName());
+        for (int i = 0; i < method.getParameterTypes().length; ++i) {
+            logger.debug(method.getParameterTypes()[i].getName());
+        }
+        for (int i = 0; i < args.length; ++i) {
+            logger.debug(args[i].toString());
+        }
+
+        RpcClientHandler handler = ConnectManage.getInstance().chooseHandler();
+        RpcFuture rpcFuture = handler.sendRequest(rpcRequest);
+        return rpcFuture.get();
     }
 
     private RpcRequest createRequest(String className, String methodName, Object[] args){
