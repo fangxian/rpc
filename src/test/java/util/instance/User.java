@@ -1,4 +1,4 @@
-package test.util.instance;
+package util.instance;
 
 import lombok.Builder;
 import lombok.Data;

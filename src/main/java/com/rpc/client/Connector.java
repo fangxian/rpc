@@ -187,7 +187,6 @@ public class Connector {
         int index = (roundRobin.getAndAdd(1) + size) % size;
         InetSocketAddress socketAddress = addresses.get(index);
         return serviceHandlerMap.get(socketAddress);
-
     }
 
     public void signalAvailableHandler() {

@@ -1,4 +1,4 @@
-package test.service;
+package service;
 
 public class PersonServiceImp implements PersonService {
     @Override

@@ -1,4 +1,4 @@
-package test.service;
+package service;
 
 public class HelloServiceImp implements HelloService {
     @Override

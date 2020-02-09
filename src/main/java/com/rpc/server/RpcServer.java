@@ -63,7 +63,7 @@ public class RpcServer {
                                     .addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
                                     .addLast(new RpcDecoder(RpcRequest.class))
                                     .addLast(new RpcEncoder(RpcResponse.class))
-                                    .addLast(new RpcServerHandler(handlerMap));
+                                    .addLast(new RpcServerHandler(handlerMap, serverAddress));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -74,7 +74,6 @@ public class RpcServer {
             int port = Integer.parseInt(array[1]);
             ChannelFuture future = bootstrap.bind(host, port).sync();
             logger.info("server started on port {}", port);
-            System.out.println("server start on port: " + port);
             if(serviceRegistry != null){
                 serviceRegistry.registerService(serverAddress);
             }

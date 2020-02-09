@@ -1,11 +1,9 @@
-package test.server;
+package server;
 
 import com.rpc.registry.RegistryService;
 import com.rpc.server.RpcServer;
-import test.service.HelloService;
-import test.service.HelloServiceImp;
-import test.service.PersonService;
-import test.service.PersonServiceImp;
+import service.PersonService;
+import service.PersonServiceImp;
 
 public class RpcServerTest2 {
     public static void main(String[] args) throws Exception{
@@ -14,7 +12,7 @@ public class RpcServerTest2 {
         RpcServer rpcServer = new RpcServer("127.0.0.1:8898:"+name, registryService);
         //注册服务
         PersonService personService = new PersonServiceImp();
-        rpcServer.addService("test.service.PersonService", personService);
+        rpcServer.addService("service.PersonService", personService);
         try {
             rpcServer.start();
         } catch (Exception e){

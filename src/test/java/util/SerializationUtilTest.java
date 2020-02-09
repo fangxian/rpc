@@ -1,8 +1,8 @@
-package test.util;
+package util;
 
 import com.rpc.util.SerializationUtil;
-import test.util.instance.Group;
-import test.util.instance.User;
+import util.instance.Group;
+import util.instance.User;
 
 import java.util.Arrays;
 

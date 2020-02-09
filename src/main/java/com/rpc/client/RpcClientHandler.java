@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -17,9 +19,18 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private volatile Channel channel;
     private SocketAddress remotePeer;
     private ConcurrentHashMap<String, Object> pendingRpc = new ConcurrentHashMap<>();
-
+    private Map<String, Integer> interfaceCount = new HashMap<>();
 
     public RpcFuture sendRequest(RpcRequest rpcRequest) {
+        String address = remotePeer.toString() + "/" + rpcRequest.getClassName() + "/" + rpcRequest.getMethodName();
+        if(interfaceCount.containsKey(address)) {
+            int count = interfaceCount.get(address);
+            count++;
+            interfaceCount.put(address, count);
+        } else {
+            interfaceCount.put(address, 1);
+        }
+
         final CountDownLatch latch = new CountDownLatch(1);
         RpcFuture rpcFuture = new RpcFuture(rpcRequest);
         pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
@@ -75,5 +86,9 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
     public Channel getChannel(){
         return channel;
+    }
+
+    public Map<String, Integer> getInterfaceCount() {
+        return interfaceCount;
     }
 }

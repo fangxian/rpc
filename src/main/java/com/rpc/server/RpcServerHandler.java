@@ -1,23 +1,26 @@
 package com.rpc.server;
 
+import com.rpc.client.ObjectProxy;
 import com.rpc.util.RpcRequest;
 import com.rpc.util.RpcResponse;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import net.sf.cglib.reflect.FastClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     private static Logger logger = LoggerFactory.getLogger(RpcServerHandler.class);
     private Map<String, Object> handlerMap;
-
-    public RpcServerHandler(Map<String, Object> map){
+    private Map<String, Integer> interfaceCount = new HashMap<>();
+    private String serverAddress;
+    public RpcServerHandler(Map<String, Object> map, String serverAddress){
         this.handlerMap = map;
+        this.serverAddress = serverAddress;
+        initInterfaceCount();
     }
 
     @Override
@@ -25,6 +28,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         RpcServer.submit(new Runnable() {
             @Override
             public void run() {
+                logger.info("local address " + ctx.channel().localAddress().toString());
                 //解析RpcRequest，执行，写回RpcResponse
                 logger.info("receove request id {}", request.getRequestId());
                 String id = request.getRequestId();
@@ -49,6 +53,15 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     //处理远程调用
     public Object handle(RpcRequest rpcRequest) throws Throwable{
+        String address = serverAddress+ "/" + rpcRequest.getClassName() + "/"+rpcRequest.getMethodName();
+        if(interfaceCount.containsKey(address)) {
+            int count = interfaceCount.get(address);
+            count++;
+            interfaceCount.put(address, count);
+        } else {
+            interfaceCount.put(address, 1);
+        }
+
         String className = rpcRequest.getClassName();
         Object serviceBean = handlerMap.get(className);
 
@@ -79,5 +92,19 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
         logger.error("server caught exception",cause);
         ctx.close();
+    }
+
+    public void initInterfaceCount() {
+        for(Map.Entry<String, Object> entry : handlerMap.entrySet()){
+            for(Method method : entry.getValue().getClass().getDeclaredMethods()){
+                String address = serverAddress + "/" +entry.getKey() + "/" + method.getName();
+                interfaceCount.put(address, 0);
+            }
+        }
+    }
+
+    //TODO use kafka produce to publish interface count
+    public Map<String, Integer> getInterfaceCount() {
+        return interfaceCount;
     }
 }
