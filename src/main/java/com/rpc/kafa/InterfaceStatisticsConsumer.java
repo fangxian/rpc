@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.dyuproject.protostuff.CollectionSchema.MessageFactories.Collection;
-
 public class InterfaceStatisticsConsumer extends Thread{
     private static Logger logger = LoggerFactory.getLogger(InterfaceStatisticsConsumer.class);
     private Properties properties;
