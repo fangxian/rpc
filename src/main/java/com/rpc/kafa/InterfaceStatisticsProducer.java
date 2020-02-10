@@ -31,10 +31,11 @@ public class InterfaceStatisticsProducer {
     private InterfaceStatisticsProducer() {
         properties = new Properties();
         decodeProperties();
+        createProducer();
     }
 
     private void decodeProperties() {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("rpckafka.properties");
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("rpckafka-producer.properties");
         try {
             properties.load(inputStream);
         } catch (IOException e) {

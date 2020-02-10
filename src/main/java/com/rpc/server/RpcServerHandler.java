@@ -1,6 +1,10 @@
 package com.rpc.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.rpc.client.ObjectProxy;
+import com.rpc.kafa.InterfaceStatisticsProducer;
+import com.rpc.kafa.KafkaConstant;
 import com.rpc.util.RpcRequest;
 import com.rpc.util.RpcResponse;
 import io.netty.channel.*;
@@ -17,10 +21,14 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     private Map<String, Object> handlerMap;
     private Map<String, Integer> interfaceCount = new HashMap<>();
     private String serverAddress;
+    private InterfaceStatisticsProducer producer;
+    private ObjectMapper mapper = new ObjectMapper(); //转换器
+
     public RpcServerHandler(Map<String, Object> map, String serverAddress){
         this.handlerMap = map;
         this.serverAddress = serverAddress;
         initInterfaceCount();
+        producer = InterfaceStatisticsProducer.getInstance();
     }
 
     @Override
@@ -61,6 +69,8 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         } else {
             interfaceCount.put(address, 1);
         }
+        //TODO 修改成定时上报接口调用统计
+        reportInterfaceCount();
 
         String className = rpcRequest.getClassName();
         Object serviceBean = handlerMap.get(className);
@@ -103,8 +113,9 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         }
     }
 
-    //TODO use kafka produce to publish interface count
-    public Map<String, Integer> getInterfaceCount() {
-        return interfaceCount;
+    public void reportInterfaceCount() throws Exception{
+        String msg = mapper.writeValueAsString(interfaceCount);
+        producer.produce(KafkaConstant.STATISTIC_INTERFACE, msg);
+        return ;
     }
 }
