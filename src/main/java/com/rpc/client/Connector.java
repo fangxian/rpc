@@ -42,7 +42,7 @@ public class Connector {
 
     public static Connector getInstance(){
         if(connector == null){
-            synchronized (ConnectManage.class){
+            synchronized (Connector.class){
                 if(connector == null){
                     connector = new Connector();
                 }

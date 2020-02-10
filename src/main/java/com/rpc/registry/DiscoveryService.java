@@ -1,6 +1,5 @@
 package com.rpc.registry;
 
-import com.rpc.client.ConnectManage;
 import com.rpc.client.Connector;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;

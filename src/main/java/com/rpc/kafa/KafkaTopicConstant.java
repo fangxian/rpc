@@ -1,5 +1,5 @@
 package com.rpc.kafa;
 
-public class KafkaConstant {
+public class KafkaTopicConstant {
     public static String STATISTIC_INTERFACE = "statistic";
 }

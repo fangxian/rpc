@@ -1,10 +1,8 @@
 package com.rpc.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.rpc.client.ObjectProxy;
 import com.rpc.kafa.InterfaceStatisticsProducer;
-import com.rpc.kafa.KafkaConstant;
+import com.rpc.kafa.KafkaTopicConstant;
 import com.rpc.util.RpcRequest;
 import com.rpc.util.RpcResponse;
 import io.netty.channel.*;
@@ -115,7 +113,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     public void reportInterfaceCount() throws Exception{
         String msg = mapper.writeValueAsString(interfaceCount);
-        producer.produce(KafkaConstant.STATISTIC_INTERFACE, msg);
+        producer.produce(KafkaTopicConstant.STATISTIC_INTERFACE, msg);
         return ;
     }
 }
