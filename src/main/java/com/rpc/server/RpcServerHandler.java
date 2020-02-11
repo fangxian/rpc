@@ -1,8 +1,8 @@
 package com.rpc.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rpc.kafa.InterfaceStatisticsProducer;
-import com.rpc.kafa.KafkaTopicConstant;
+import com.rpc.kafka.InterfaceStatisticsProducer;
+import com.rpc.kafka.KafkaTopicConstant;
 import com.rpc.util.RpcRequest;
 import com.rpc.util.RpcResponse;
 import io.netty.channel.*;

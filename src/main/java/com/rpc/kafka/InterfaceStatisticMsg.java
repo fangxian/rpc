@@ -1,4 +1,4 @@
-package com.rpc.kafa;
+package com.rpc.kafka;
 
 public class InterfaceStatisticMsg {
     private String interfaceName;

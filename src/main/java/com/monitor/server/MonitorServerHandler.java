@@ -1,7 +1,9 @@
 package com.monitor.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rpc.kafa.InterfaceStatisticsConsumer;
+import com.monitor.util.MonitorConstant;
+import com.rpc.kafka.InterfaceStatisticsConsumer;
+import com.rpc.kafka.KafkaTopicConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -19,9 +21,16 @@ public class MonitorServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final Object msg) throws Exception {
         String receiveMsg = (String)msg;
-        Map<String, Integer> countMap = InterfaceStatisticsConsumer.getInstance().getInterfaceCount();
-        String response = objectMapper.writeValueAsString(countMap) + "\r\n";
-        ctx.writeAndFlush(response);
+        if(receiveMsg.equals(KafkaTopicConstant.STATISTIC_INTERFACE)) {
+            Map<String, Integer> countMap = InterfaceStatisticsConsumer.getInstance().getInterfaceCount();
+            String response = objectMapper.writeValueAsString(countMap) + "\r\n";
+            ctx.writeAndFlush(response);
+        }
+        else {
+            logger.error("monitor server receive error message: {} ", receiveMsg);
+            String message = MonitorConstant.COMMADN_ERROR + "\r\n";
+            ctx.writeAndFlush(message);
+        }
     }
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){

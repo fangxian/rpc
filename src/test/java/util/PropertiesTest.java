@@ -1,6 +1,6 @@
 package util;
 
-import com.rpc.kafa.InterfaceStatisticsProducer;
+import com.rpc.kafka.InterfaceStatisticsProducer;
 
 public class PropertiesTest {
     public static void main(String[] args) {

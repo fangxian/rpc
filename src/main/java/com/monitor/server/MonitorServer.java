@@ -1,6 +1,6 @@
 package com.monitor.server;
 
-import com.rpc.kafa.InterfaceStatisticsConsumer;
+import com.rpc.kafka.InterfaceStatisticsConsumer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

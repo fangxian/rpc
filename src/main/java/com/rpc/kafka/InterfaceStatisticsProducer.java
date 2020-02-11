@@ -1,4 +1,4 @@
-package com.rpc.kafa;
+package com.rpc.kafka;
 
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.IntegerSerializer;
