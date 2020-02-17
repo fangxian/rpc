@@ -11,26 +11,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MonitorClient {
+public class MonitorClient extends Thread {
     private static Logger logger = LoggerFactory.getLogger(MonitorClient.class);
     private String host;
     private int port;
     private Map<String, Integer> interfaceCount = new HashMap<>();
     private ReentrantLock lock = new ReentrantLock();
 
-    private MonitorClient(String serverAddress) {
+    public MonitorClient(String serverAddress) {
         host = serverAddress.split(":")[0];
         port = Integer.parseInt(serverAddress.split(":")[1]);
     }
 
+    @Override
+    public void run() {
+        startClient();
+    }
 
-    public void startClient() throws Exception{
+    public void startClient() {
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
             b.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new MonitorClientInitializer(this));
             ChannelFuture f = b.connect(host, port);
             f.channel().closeFuture().sync();
+        } catch (Exception e) {
+            logger.error(e.toString());
         } finally {
             eventLoopGroup.shutdownGracefully();
         }
@@ -47,6 +53,10 @@ public class MonitorClient {
         lock.lock();
         interfaceCount = map;
         lock.unlock();
+    }
+
+    public void test() {
+        System.out.println("tetetetetetetetet");
     }
 
 }

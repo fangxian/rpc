@@ -20,10 +20,27 @@ public class MonitorClientHandler extends SimpleChannelInboundHandler<Object> {
         monitorClient = client;
     }
 
-    public void sendRequest() {
+    public String constructCommandStr() {
         String requestStr = KafkaTopicConstant.STATISTIC_INTERFACE + "/r/n";
+        return requestStr;
     }
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    ctx.writeAndFlush(constructCommandStr());
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
+                }
+            }
+        });
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

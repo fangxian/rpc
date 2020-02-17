@@ -38,6 +38,7 @@ public class InterfaceStatisticsConsumer extends Thread{
     private InterfaceStatisticsConsumer() {
         properties = new Properties();
         decodeProperties();
+        createConsumer();
     }
 
 
